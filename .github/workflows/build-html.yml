@@ -1,1 +1,42 @@
+name: Build Notebook HTML
 
+on:
+  push:
+    paths:
+      - "Binary_Classification_of_Diabetes_Risk.ipynb"
+
+jobs:
+  build-html:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your repository
+      - uses: actions/checkout@v4
+
+      # Set up Python
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Install Jupyter and nbconvert
+      - name: Install nbconvert
+        run: pip install nbconvert jupyter
+
+      # Execute notebook and convert to HTML (code visible)
+      - name: Convert notebook to HTML
+        run: |
+          mkdir -p docs
+          jupyter nbconvert \
+            --execute \
+            --to html \
+            Binary_Classification_of_Diabetes_Risk.ipynb \
+            --output docs/Binary_Classification_of_Diabetes_Risk.html
+
+      # Commit the generated HTML
+      - name: Commit HTML
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add docs/Binary_Classification_of_Diabetes_Risk.html
+          git commit -m "Auto-generate notebook HTML" || echo "No changes"
+          git push
