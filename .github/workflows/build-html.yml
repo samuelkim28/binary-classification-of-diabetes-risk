@@ -10,29 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Install all required packages
       - name: Install dependencies
         run: |
           pip install pandas matplotlib scikit-learn kagglehub jupyter nbconvert
 
-      # Convert notebook to HTML (execute it)
       - name: Convert notebook to HTML
         run: |
           mkdir -p docs
           jupyter nbconvert --execute --to html Binary_Classification_of_Diabetes_Risk.ipynb \
-          --output docs/Binary_Classification_of_Diabetes_Risk.html
+          --output docs/index.html
 
-      # Commit the generated HTML
-      - name: Commit HTML
+      - name: Commit and push HTML
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add docs/Binary_Classification_of_Diabetes_Risk.html
+          git add docs/index.html
           git commit -m "Auto-generate notebook HTML" || echo "No changes"
-          git push
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
