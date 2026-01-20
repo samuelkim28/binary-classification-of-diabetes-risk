@@ -10,27 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout your repository
       - uses: actions/checkout@v4
 
-      # Set up Python
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Install Jupyter and nbconvert
-      - name: Install nbconvert
-        run: pip install nbconvert jupyter
+      # Install all required packages
+      - name: Install dependencies
+        run: |
+          pip install pandas matplotlib scikit-learn kagglehub jupyter nbconvert
 
-      # Execute notebook and convert to HTML (code visible)
+      # Convert notebook to HTML (execute it)
       - name: Convert notebook to HTML
         run: |
           mkdir -p docs
-          jupyter nbconvert \
-            --execute \
-            --to html \
-            Binary_Classification_of_Diabetes_Risk.ipynb \
-            --output docs/Binary_Classification_of_Diabetes_Risk.html
+          jupyter nbconvert --execute --to html Binary_Classification_of_Diabetes_Risk.ipynb \
+          --output docs/Binary_Classification_of_Diabetes_Risk.html
 
       # Commit the generated HTML
       - name: Commit HTML
