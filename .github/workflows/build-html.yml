@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - "Binary_Classification_of_Diabetes_Risk.ipynb"
+      - ".github/workflows/build-html.yml"
+
+permissions:
+  contents: write
 
 jobs:
   build-html:
